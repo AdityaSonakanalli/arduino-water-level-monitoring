@@ -6,6 +6,11 @@ const int GREEN_LED = 8;
 const int YELLOW_LED = 9;
 const int RED_LED = 10;
 
+const int LOW_THRESHOLD = 300;
+const int HIGH_THRESHOLD = 700;
+
+const int SAMPLE_COUNT = 5;
+
 void setup() {
   pinMode(GREEN_LED, OUTPUT);
   pinMode(YELLOW_LED, OUTPUT);
@@ -16,19 +21,26 @@ void setup() {
 
 void loop() {
 
-  int waterLevel = analogRead(WATER_SENSOR);
+  long total = 0;
+
+  for (int i = 0; i < SAMPLE_COUNT; i++) {
+    total += analogRead(WATER_SENSOR);
+    delay(20);
+  }
+
+  int waterLevel = total / SAMPLE_COUNT;
 
   Serial.print("Water Level: ");
   Serial.println(waterLevel);
 
-  if (waterLevel < 300) {
+  if (waterLevel < LOW_THRESHOLD) {
 
     digitalWrite(GREEN_LED, HIGH);
     digitalWrite(YELLOW_LED, LOW);
     digitalWrite(RED_LED, LOW);
 
   }
-  else if (waterLevel < 700) {
+  else if (waterLevel < HIGH_THRESHOLD) {
 
     digitalWrite(GREEN_LED, LOW);
     digitalWrite(YELLOW_LED, HIGH);
